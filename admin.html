@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .admin-wrap {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 15px;
+        }
+
+        h2 { font-weight: 800; margin-bottom: 20px; }
+        h4 { color: #22c55e; margin-top: 30px; }
+
+        .form-card {
+            background: #111827;
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 10px;
+            border: none;
+            background: #1f2937;
+            color: white;
+            margin-bottom: 10px;
+            font-size: 15px;
+        }
+
+        .btn {
+            padding: 12px 18px;
+            border-radius: 10px;
+            border: none;
+            color: white;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        .btn-primary { background: #2563eb; }
+        .btn-success { background: #22c55e; color: black; }
+        .btn-warning { background: #f59e0b; color: black; }
+        .btn-danger  { background: #ef4444; }
+
+        ul { list-style: none; padding: 0; }
+
+        li {
+            background: #0f172a;
+            padding: 10px 14px;
+            border-radius: 10px;
+            margin-bottom: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .table-light {
+            width: 100%;
+            border-collapse: collapse;
+            background: #0f172a;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .table-light th,
+        .table-light td {
+            padding: 10px 14px;
+            text-align: left;
+            border-bottom: 1px solid #1f2937;
+        }
+
+        .table-light th { background: #1f2937; }
+    </style>
+</head>
+<body>
+
+<div id="navbar-mount"></div>
+
+<div class="admin-wrap">
+    <h2>⚙️ Admin Panel</h2>
+
+    <h4>Aggiungi Squadra</h4>
+    <div class="form-card">
+        <input class="form-control" id="teamName" placeholder="Nome squadra">
+        <button class="btn btn-primary" id="addTeamBtn">Aggiungi</button>
+
+        <ul id="teamsList" style="margin-top:15px"></ul>
+    </div>
+
+    <h4>Crea Utente</h4>
+    <div class="form-card">
+        <input class="form-control" id="userUsername" placeholder="Username">
+        <input class="form-control" id="userPassword" placeholder="Password">
+
+        <select class="form-control" id="userRole">
+            <option value="admin">Admin</option>
+            <option value="squadra">Squadra</option>
+            <option value="commissario">Commissario</option>
+            <option value="campo">Campo</option>
+        </select>
+
+        <select class="form-control" id="userTeam">
+            <option value="">-- Nessuna squadra --</option>
+        </select>
+
+        <button class="btn btn-success" id="addUserBtn">Crea Utente</button>
+
+        <ul id="usersList" style="margin-top:15px"></ul>
+    </div>
+
+    <h4>Crea Partita</h4>
+    <div class="form-card">
+        <select class="form-control" id="matchTeam1"></select>
+        <select class="form-control" id="matchTeam2"></select>
+        <input class="form-control" type="datetime-local" id="matchDate">
+        <input class="form-control" type="number" id="matchGiornata" placeholder="Giornata">
+        <button class="btn btn-warning" id="addMatchBtn">Crea Partita</button>
+
+        <table class="table-light">
+            <thead>
+                <tr>
+                    <th>Squadre</th>
+                    <th>Giornata</th>
+                    <th>Stato</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody id="matchesTable"></tbody>
+        </table>
+    </div>
+</div>
+
+<script type="module" src="js/navbar.js"></script>
+<script type="module" src="js/admin.js"></script>
+</body>
+</html>

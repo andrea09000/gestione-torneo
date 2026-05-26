@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Distinta squadra</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .distinta { max-width: 520px; margin: 0 auto; padding: 15px; }
+
+        .card {
+            background: #111827; border-radius: 16px;
+            padding: 16px; margin-bottom: 15px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .title {
+            font-size: 16px; font-weight: 700;
+            margin-bottom: 10px; color: #22c55e;
+        }
+
+        input, select {
+            width: 100%; padding: 14px; margin-bottom: 10px;
+            border-radius: 12px; border: none;
+            background: #1f2937; color: white; font-size: 16px;
+        }
+
+        input:focus, select:focus { outline: 2px solid #22c55e; }
+
+        .btn-save {
+            position: sticky; bottom: 10px; width: 100%; padding: 16px;
+            background: #22c55e; border: none; border-radius: 14px;
+            font-weight: bold; font-size: 16px; color: black;
+        }
+
+        .alert {
+            background: #14532d; padding: 10px;
+            border-radius: 12px; margin-bottom: 10px;
+            display: none;
+        }
+
+        .alert.show { display: block; }
+
+        @media (min-width: 768px) {
+            .distinta { max-width: 900px; }
+        }
+    </style>
+</head>
+<body>
+
+<div id="navbar-mount"></div>
+
+<div class="distinta">
+    <h2>📋 Distinta squadra</h2>
+
+    <div class="alert" id="successAlert">✅ Distinta salvata</div>
+
+    <form id="distintaForm">
+        <div class="card">
+            <div class="title">⚽ Partita</div>
+            <select id="matchSelect"></select>
+        </div>
+
+        <div class="card">
+            <div class="title">👕 Giocatori</div>
+            <div id="playersList"></div>
+        </div>
+
+        <div class="card">
+            <div class="title">🧑‍💼 Staff</div>
+            <input id="dirigente"      placeholder="Dirigente">
+            <input id="accompagnatore" placeholder="Accompagnatore">
+            <input id="guardialinee"   placeholder="Guardialinee">
+        </div>
+
+        <button class="btn-save" type="submit">SALVA DISTINTA</button>
+    </form>
+</div>
+
+<script type="module" src="js/navbar.js"></script>
+<script type="module" src="js/distinta.js"></script>
+</body>
+</html>

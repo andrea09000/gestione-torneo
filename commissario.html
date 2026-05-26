@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Commissario di Campo</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .commissario-container { max-width: 1200px; margin: auto; padding: 15px; }
+
+        .page-title {
+            font-size: 32px; font-weight: 800;
+            margin-bottom: 20px; text-align: center;
+        }
+
+        .card-dark {
+            background: #111827; border-radius: 20px;
+            padding: 20px; margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+        }
+
+        .section-title {
+            font-size: 20px; font-weight: 700;
+            margin-bottom: 15px; color: #22c55e;
+        }
+
+        .select-match {
+            width: 100%; padding: 18px; border: none; border-radius: 14px;
+            background: #1f2937; color: white; font-size: 18px; margin-bottom: 15px;
+        }
+
+        .btn-load {
+            width: 100%; padding: 18px; border: none; border-radius: 14px;
+            background: #2563eb; color: white; font-size: 20px; font-weight: 700;
+        }
+
+        .btn-save {
+            width: 100%; padding: 20px; border: none; border-radius: 16px;
+            background: #22c55e; color: black; font-size: 22px;
+            font-weight: 800; margin-top: 20px;
+        }
+
+        .team-box {
+            background: #0f172a; border-radius: 18px;
+            padding: 18px; margin-bottom: 20px;
+        }
+
+        .team-header {
+            text-align: center; font-size: 24px;
+            font-weight: 800; margin-bottom: 20px;
+        }
+
+        .player-row { display: flex; gap: 10px; margin-bottom: 12px; }
+
+        .input-name {
+            flex: 1; padding: 16px; border: none; border-radius: 14px;
+            background: #1f2937; color: white; font-size: 18px;
+        }
+
+        .input-number {
+            width: 90px; padding: 16px; border: none; border-radius: 14px;
+            background: #1f2937; color: white; text-align: center;
+            font-size: 18px; font-weight: bold;
+        }
+
+        .staff-box {
+            margin-top: 25px; padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .staff-title {
+            font-size: 18px; font-weight: 700;
+            margin-bottom: 15px; color: #facc15;
+        }
+
+        .staff-row {
+            display: flex; align-items: center; justify-content: space-between;
+            background: #1e293b; padding: 12px 15px;
+            border-radius: 12px; margin-bottom: 10px;
+        }
+
+        .staff-role { font-weight: 700; opacity: 0.8; }
+
+        @media (max-width: 768px) {
+            .page-title { font-size: 28px; }
+            .team-header { font-size: 22px; }
+            .player-row { flex-direction: column; }
+            .input-number { width: 100%; }
+            .btn-save { position: sticky; bottom: 10px; }
+        }
+
+        @media (min-width: 769px) {
+            .teams-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div id="navbar-mount"></div>
+
+<div class="commissario-container">
+    <div class="page-title">🧑‍⚖️ Commissario di Campo</div>
+
+    <div class="card-dark">
+        <div class="section-title">⚽ Seleziona partita</div>
+
+        <select id="matchSelect" class="select-match"></select>
+        <button id="loadBtn" class="btn-load">📺 Carica partita</button>
+    </div>
+
+    <div id="teamsArea" style="display:none">
+        <div class="teams-grid">
+            <div class="team-box" id="team1Box"></div>
+            <div class="team-box" id="team2Box"></div>
+        </div>
+
+        <button id="saveBtn" class="btn-save">💾 Salva modifiche</button>
+    </div>
+</div>
+
+<script type="module" src="js/navbar.js"></script>
+<script type="module" src="js/commissario.js"></script>
+</body>
+</html>

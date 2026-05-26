@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Torneo Agnosine - Calendario</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .calendar-wrap { max-width: 1000px; margin: auto; padding: 15px; }
+        h2 { font-weight: 800; margin-bottom: 20px; }
+
+        .giornata-block { margin-bottom: 30px; }
+
+        .giornata-title {
+            font-size: 20px; font-weight: 700;
+            margin-bottom: 10px; color: #22c55e;
+        }
+
+        .match-table {
+            width: 100%;
+            background: #111827;
+            border-radius: 16px;
+            overflow: hidden;
+            border-collapse: collapse;
+        }
+
+        .match-table th {
+            background: #1f2937;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 14px;
+            text-align: center;
+            color: white;
+        }
+
+        .match-table td {
+            padding: 14px;
+            text-align: center;
+            border-top: 1px solid #1f2937;
+            vertical-align: middle;
+        }
+
+        .match-table tr:hover td { background: #0f172a; }
+
+        .match-name { font-weight: 600; }
+
+        .match-score {
+            font-size: 18px;
+            font-weight: 800;
+            color: #22c55e;
+        }
+
+        .badge {
+            padding: 6px 10px;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: 700;
+            display: inline-block;
+        }
+
+        .live     { background: #ef4444; color: white; }
+        .paused   { background: #f59e0b; color: black; }
+        .finished { background: #22c55e; color: black; }
+        .upcoming { background: #64748b; color: white; }
+
+        .empty {
+            text-align: center;
+            opacity: 0.7;
+            margin-top: 60px;
+        }
+    </style>
+</head>
+<body>
+
+<div id="navbar-mount"></div>
+
+<div class="calendar-wrap">
+    <h2>📅 Calendario</h2>
+    <div id="calendar"></div>
+</div>
+
+<script type="module" src="js/navbar.js"></script>
+<script type="module" src="js/home.js"></script>
+</body>
+</html>

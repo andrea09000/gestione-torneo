@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Telecomando - Lista Partite</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .remote {
+            max-width: 700px;
+            margin: 30px auto;
+            padding: 15px;
+        }
+
+        .match-card {
+            background: #111827;
+            border-radius: 16px;
+            padding: 18px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            text-decoration: none;
+            color: white;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        .match-card:hover {
+            background: #1f2937;
+            transform: translateY(-2px);
+            transition: 0.2s;
+        }
+
+        .match-info { font-size: 18px; font-weight: 700; }
+
+        .match-status {
+            font-size: 12px; padding: 6px 10px;
+            border-radius: 10px; font-weight: 700;
+        }
+
+        .live     { background: #ef4444; }
+        .paused   { background: #f59e0b; color: black; }
+        .finished { background: #22c55e; color: black; }
+        .upcoming { background: #64748b; }
+
+        .page-title {
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<div id="navbar-mount"></div>
+
+<div class="remote">
+    <div class="page-title">🎮 Telecomando</div>
+    <div id="matchesList">Caricamento...</div>
+</div>
+
+<script type="module" src="js/navbar.js"></script>
+<script type="module" src="js/telecomando.js"></script>
+</body>
+</html>
