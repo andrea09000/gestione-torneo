@@ -26,12 +26,13 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
-    apiKey: "REPLACE_WITH_YOUR_API_KEY",
-    authDomain: "REPLACE.firebaseapp.com",
-    projectId: "REPLACE_PROJECT_ID",
-    storageBucket: "REPLACE.appspot.com",
-    messagingSenderId: "REPLACE",
-    appId: "REPLACE"
+    apiKey: "AIzaSyCtNYAa7WlQjWCn-1Mr73w82H_PUhSbnXY",
+    authDomain: "gestionetorneo-f0984.firebaseapp.com",
+    projectId: "gestionetorneo-f0984",
+    storageBucket: "gestionetorneo-f0984.firebasestorage.app",
+    messagingSenderId: "654451650463",
+    appId: "1:654451650463:web:37ad22bb60704ef60397aa",
+    measurementId: "G-M4ZHTS6WQE"
 };
 
 const app = initializeApp(firebaseConfig);
