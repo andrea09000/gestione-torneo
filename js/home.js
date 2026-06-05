@@ -86,11 +86,7 @@ function render(matches) {
 
 let cachedMatches = [];
 
-const q = query(
-    collection(db, "matches"),
-    orderBy("giornata"),
-    orderBy("matchDate")
-);
+const q = query(collection(db, "matches"), orderBy("giornata"));
 
 onSnapshot(q, (snap) => {
     cachedMatches = snap.docs.map(d => ({ id: d.id, ...d.data() }));
