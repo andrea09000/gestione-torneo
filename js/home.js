@@ -45,37 +45,85 @@ function render(matches) {
     }
 
     const byGiornata = {};
+
     for (const m of matches) {
         const g = m.giornata || 1;
-        if (!byGiornata[g]) byGiornata[g] = [];
+
+        if (!byGiornata[g]) {
+            byGiornata[g] = [];
+        }
+
         byGiornata[g].push(m);
     }
 
-    const giornate = Object.keys(byGiornata).sort((a, b) => Number(a) - Number(b));
+    // Ordina le partite della stessa giornata per data e ora
+    for (const g in byGiornata) {
+        byGiornata[g].sort((a, b) => {
+            const aTime = a.matchDate?.toMillis
+                ? a.matchDate.toMillis()
+                : new Date(a.matchDate).getTime();
+
+            const bTime = b.matchDate?.toMillis
+                ? b.matchDate.toMillis()
+                : new Date(b.matchDate).getTime();
+
+            return aTime - bTime;
+        });
+    }
+
+    const giornate = Object.keys(byGiornata)
+        .sort((a, b) => Number(a) - Number(b));
 
     let html = "";
+
     for (const g of giornate) {
         html += `
         <div class="giornata-block">
             <div class="giornata-title">🏟 Giornata ${g}</div>
+
             <table class="match-table">
                 <thead>
                     <tr>
                         <th>Partita</th>
+                        <th>Data/Ora</th>
                         <th>Risultato</th>
                         <th>Minuto</th>
                         <th>Stato</th>
                     </tr>
                 </thead>
+
                 <tbody>
-                    ${byGiornata[g].map(m => `
+                    ${byGiornata[g].map(m => {
+                        const dataPartita = m.matchDate?.toDate
+                            ? m.matchDate.toDate()
+                            : new Date(m.matchDate);
+
+                        const dataFormattata = dataPartita.toLocaleString("it-IT", {
+                            day: "2-digit",
+                            month: "2-digit",
+                            year: "numeric",
+                            hour: "2-digit",
+                            minute: "2-digit"
+                        });
+
+                        return `
                         <tr>
-                            <td class="match-name">${m.team1Name} vs ${m.team2Name}</td>
-                            <td class="match-score">${m.score1 || 0} - ${m.score2 || 0}</td>
+                            <td class="match-name">
+                                ${m.team1Name} vs ${m.team2Name}
+                            </td>
+
+                            <td>${dataFormattata}</td>
+
+                            <td class="match-score">
+                                ${m.score1 || 0} - ${m.score2 || 0}
+                            </td>
+
                             <td>⏱ ${liveMinute(m)}</td>
+
                             <td>${statusBadge(m.status)}</td>
                         </tr>
-                    `).join("")}
+                        `;
+                    }).join("")}
                 </tbody>
             </table>
         </div>`;
@@ -88,10 +136,8 @@ let cachedMatches = [];
 
 const q = query(
     collection(db, "matches"),
-    orderBy("giornata"),
-    orderBy("matchDate")
+    orderBy("giornata")
 );
-
 onSnapshot(
     q,
     (snap) => {
