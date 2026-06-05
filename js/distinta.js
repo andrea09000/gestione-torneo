@@ -54,13 +54,16 @@ async function loadMatches() {
     const snap = await getDocs(matchesRef);
 
     const myMatches = snap.docs
-        .map(d => ({ id: d.id, ...d.data() }))
-        .filter(m => m.team1Id === teamId || m.team2Id === teamId)
-        .sort((a, b) => {
-            const da = a.matchDate?.toMillis?.() || 0;
-            const db_ = b.matchDate?.toMillis?.() || 0;
-            return da - db_;
-        });
+    .map(d => ({ id: d.id, ...d.data() }))
+    .filter(m =>
+        (m.team1Id === teamId || m.team2Id === teamId) &&
+        m.status === "upcoming"
+    )
+    .sort((a, b) => {
+        const da = a.matchDate?.toMillis?.() || 0;
+        const db_ = b.matchDate?.toMillis?.() || 0;
+        return da - db_;
+    });
 
     if (!myMatches.length) {
         matchSelect.innerHTML = '<option>Nessuna partita</option>';
@@ -68,8 +71,25 @@ async function loadMatches() {
     }
 
     matchSelect.innerHTML = myMatches
-        .map(m => `<option value="${m.id}">${escapeHtml(m.team1Name)} vs ${escapeHtml(m.team2Name)}</option>`)
-        .join("");
+    .map(m => {
+        const data = m.matchDate?.toDate?.();
+
+        const ora = data
+            ? data.toLocaleString("it-IT", {
+                  day: "2-digit",
+                  month: "2-digit",
+                  hour: "2-digit",
+                  minute: "2-digit"
+              })
+            : "";
+
+        return `
+            <option value="${m.id}">
+                G${m.giornata} - ${ora} - ${escapeHtml(m.team1Name)} vs ${escapeHtml(m.team2Name)}
+            </option>
+        `;
+    })
+    .join("");
 
     matchSelect.addEventListener("change", loadLineup);
     await loadLineup();

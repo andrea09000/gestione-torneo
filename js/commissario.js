@@ -76,7 +76,7 @@ function renderTeam(box, lineupData, teamLabel, sideColor) {
             html += `
             <div class="staff-row">
                 <div class="staff-role">${escapeHtml(s.role)}</div>
-                <div>${escapeHtml(s.name)}</div>
+                <input class="input-name" value="${escapeHtml(s.name)}">
             </div>`;
         }
         html += `</div>`;
