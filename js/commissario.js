@@ -51,38 +51,209 @@ async function loadMatches() {
 }
 
 function renderTeam(box, lineupData, teamLabel, sideColor) {
-    const players = (lineupData?.players || []).filter(p => p.role === "player")
-        .sort((a, b) => (a.number || 0) - (b.number || 0) || (a.order || 0) - (b.order || 0));
 
-    const staff = (lineupData?.players || []).filter(p => p.role !== "player");
+    const players = (lineupData?.players || [])
+        .filter(p => p.role === "player")
+        .sort((a, b) =>
+            (a.number || 0) - (b.number || 0) ||
+            (a.order || 0) - (b.order || 0)
+        );
 
-    let html = `<div class="team-header">${sideColor} ${escapeHtml(teamLabel)}</div>`;
+    const staff = (lineupData?.players || [])
+        .filter(p => p.role !== "player");
 
-    if (!players.length) {
-        html += `<div style="opacity:0.7;text-align:center;padding:20px">Nessun giocatore (distinta non inviata)</div>`;
-    } else {
-        players.forEach((p, idx) => {
-            html += `
+    let html = `
+        <div class="team-header">
+            ${sideColor} ${escapeHtml(teamLabel)}
+        </div>
+    `;
+
+    html += `<div class="players-container">`;
+
+    players.forEach((p, idx) => {
+        html += `
             <div class="player-row" data-idx="${idx}">
-                <input class="input-name" value="${escapeHtml(p.name)}" placeholder="Nome giocatore">
-                <input class="input-number" type="number" value="${p.number ?? ""}" placeholder="N°">
-            </div>`;
-        });
-    }
+                <input
+                    class="input-name"
+                    value="${escapeHtml(p.name)}"
+                    placeholder="Nome giocatore">
 
-    if (staff.length) {
-        html += `<div class="staff-box"><div class="staff-title">🧑‍💼 Staff</div>`;
-        for (const s of staff) {
-            html += `
-            <div class="staff-row">
-                <div class="staff-role">${escapeHtml(s.role)}</div>
-                <input class="input-name" value="${escapeHtml(s.name)}">
-            </div>`;
-        }
-        html += `</div>`;
-    }
+                <input
+                    class="input-number"
+                    type="number"
+                    value="${p.number ?? ""}"
+                    placeholder="N°">
+
+                <button
+                    class="btn-remove-player"
+                    data-player="${idx}">
+                    ❌
+                </button>
+            </div>
+        `;
+    });
+
+    html += `</div>`;
+
+    html += `
+        <button class="btn-add-player">
+            ➕ Aggiungi giocatore
+        </button>
+    `;
+
+    html += `
+        <div class="staff-box">
+            <div class="staff-title">
+                🧑‍💼 Staff
+            </div>
+    `;
+
+    staff.forEach((s, idx) => {
+
+        html += `
+            <div class="staff-row" data-staff="${idx}">
+
+                <input
+                    class="staff-role-input"
+                    value="${escapeHtml(s.role)}"
+                    placeholder="Ruolo">
+
+                <input
+                    class="input-name"
+                    value="${escapeHtml(s.name)}"
+                    placeholder="Nome">
+
+                <button
+                    class="btn-remove-staff"
+                    data-staff="${idx}">
+                    ❌
+                </button>
+
+            </div>
+        `;
+    });
+
+    html += `
+        <button class="btn-add-staff">
+            ➕ Aggiungi dirigente
+        </button>
+    `;
+
+    html += `</div>`;
 
     box.innerHTML = html;
+
+    // ======================
+    // AGGIUNGI GIOCATORE
+    // ======================
+
+    box.querySelector(".btn-add-player")
+        ?.addEventListener("click", () => {
+
+            lineupData.players.push({
+                role: "player",
+                name: "",
+                number: null,
+                order: Date.now()
+            });
+
+            renderTeam(
+                box,
+                lineupData,
+                teamLabel,
+                sideColor
+            );
+        });
+
+    // ======================
+    // AGGIUNGI STAFF
+    // ======================
+
+    box.querySelector(".btn-add-staff")
+        ?.addEventListener("click", () => {
+
+            lineupData.players.push({
+                role: "dirigente",
+                name: ""
+            });
+
+            renderTeam(
+                box,
+                lineupData,
+                teamLabel,
+                sideColor
+            );
+        });
+
+    // ======================
+    // ELIMINA GIOCATORE
+    // ======================
+
+    box.querySelectorAll(".btn-remove-player")
+        .forEach(btn => {
+
+            btn.addEventListener("click", () => {
+
+                const index =
+                    Number(btn.dataset.player);
+
+                const playerList =
+                    lineupData.players
+                        .filter(p => p.role === "player");
+
+                const playerToRemove =
+                    playerList[index];
+
+                const realIndex =
+                    lineupData.players.indexOf(playerToRemove);
+
+                if (realIndex >= 0) {
+                    lineupData.players.splice(realIndex, 1);
+                }
+
+                renderTeam(
+                    box,
+                    lineupData,
+                    teamLabel,
+                    sideColor
+                );
+            });
+        });
+
+    // ======================
+    // ELIMINA STAFF
+    // ======================
+
+    box.querySelectorAll(".btn-remove-staff")
+        .forEach(btn => {
+
+            btn.addEventListener("click", () => {
+
+                const index =
+                    Number(btn.dataset.staff);
+
+                const staffList =
+                    lineupData.players
+                        .filter(p => p.role !== "player");
+
+                const staffToRemove =
+                    staffList[index];
+
+                const realIndex =
+                    lineupData.players.indexOf(staffToRemove);
+
+                if (realIndex >= 0) {
+                    lineupData.players.splice(realIndex, 1);
+                }
+
+                renderTeam(
+                    box,
+                    lineupData,
+                    teamLabel,
+                    sideColor
+                );
+            });
+        });
 }
 
 async function loadLineupsForMatch(matchId) {
@@ -105,24 +276,70 @@ async function loadLineupsForMatch(matchId) {
 }
 
 function readUpdatedLineup(box, lineupData) {
-    const rows = box.querySelectorAll(".player-row");
-    const playerSubset = (lineupData.players || []).filter(p => p.role === "player")
-        .sort((a, b) => (a.number || 0) - (b.number || 0) || (a.order || 0) - (b.order || 0));
 
-    const updatedPlayers = [];
-    rows.forEach((row, idx) => {
-        const name = row.querySelector(".input-name").value.trim();
-        const numRaw = row.querySelector(".input-number").value;
-        const number = numRaw === "" ? null : Number(numRaw);
+    const result = [];
 
-        const base = playerSubset[idx] || {};
-        if (name) {
-            updatedPlayers.push({ ...base, name, number, role: "player", order: idx });
-        }
+    // ======================
+    // GIOCATORI
+    // ======================
+
+    const playerRows =
+        box.querySelectorAll(".player-row");
+
+    playerRows.forEach((row, idx) => {
+
+        const name =
+            row.querySelector(".input-name")
+                .value
+                .trim();
+
+        const numberRaw =
+            row.querySelector(".input-number")
+                .value;
+
+        const number =
+            numberRaw === ""
+                ? null
+                : Number(numberRaw);
+
+        if (!name) return;
+
+        result.push({
+            role: "player",
+            name,
+            number,
+            order: idx
+        });
     });
 
-    const staff = (lineupData.players || []).filter(p => p.role !== "player");
-    return [...updatedPlayers, ...staff];
+    // ======================
+    // STAFF
+    // ======================
+
+    const staffRows =
+        box.querySelectorAll(".staff-row");
+
+    staffRows.forEach(row => {
+
+        const role =
+            row.querySelector(".staff-role-input")
+                .value
+                .trim() || "dirigente";
+
+        const name =
+            row.querySelector(".input-name")
+                .value
+                .trim();
+
+        if (!name) return;
+
+        result.push({
+            role,
+            name
+        });
+    });
+
+    return result;
 }
 
 loadBtn.addEventListener("click", () => {
