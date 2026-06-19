@@ -148,42 +148,46 @@ function renderTeam(box, lineupData, teamLabel, sideColor) {
     // ======================
 
     box.querySelector(".btn-add-player")
-        ?.addEventListener("click", () => {
+?.addEventListener("click", () => {
 
-            lineupData.players.push({
-                role: "player",
-                name: "",
-                number: null,
-                order: Date.now()
-            });
+    lineupData.players = readUpdatedLineup(box, lineupData);
 
-            renderTeam(
-                box,
-                lineupData,
-                teamLabel,
-                sideColor
-            );
-        });
+    lineupData.players.push({
+        role: "player",
+        name: "",
+        number: null,
+        order: Date.now()
+    });
+
+    renderTeam(
+        box,
+        lineupData,
+        teamLabel,
+        sideColor
+    );
+});
 
     // ======================
     // AGGIUNGI STAFF
     // ======================
 
     box.querySelector(".btn-add-staff")
-        ?.addEventListener("click", () => {
+?.addEventListener("click", () => {
 
-            lineupData.players.push({
-                role: "dirigente",
-                name: ""
-            });
+    lineupData.players = readUpdatedLineup(box, lineupData);
 
-            renderTeam(
-                box,
-                lineupData,
-                teamLabel,
-                sideColor
-            );
-        });
+    lineupData.players.push({
+        role: "dirigente",
+        name: ""
+    });
+
+    renderTeam(
+        box,
+        lineupData,
+        teamLabel,
+        sideColor
+    );
+});
 
     // ======================
     // ELIMINA GIOCATORE
