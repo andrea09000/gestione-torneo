@@ -654,6 +654,9 @@ function switchTab(tab){
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   document.getElementById('view-'+tab).classList.add('active');
   positionIndicator();
+  const banner = document.getElementById('install-banner');
+  if(tab !== 'cliente') banner.classList.add('hidden');
+  else if(deferredInstallPrompt && !installBannerDismissed) banner.classList.remove('hidden');
   if(tab==='admin' && session.admin) renderAdminAll();
   renderAll();
 }
@@ -714,7 +717,53 @@ function initListeners(){
   }, (err) => console.error('Errore ascolto tickets:', err));
 }
 
+/* ============ PWA: registrazione service worker ============
+   Necessario perché il browser proponga "Installa app" / "Aggiungi
+   a schermata Home". Le notifiche push in background arriveranno
+   in un secondo momento, quando collegherai Cloud Functions + FCM. */
+function registerServiceWorker(){
+  if('serviceWorker' in navigator){
+    navigator.serviceWorker.register('./sw.js').catch(err => {
+      console.error('Registrazione service worker fallita:', err);
+    });
+  }
+}
+
+/* ============ PWA: banner "Installa app" ============ */
+let deferredInstallPrompt = null;
+let installBannerDismissed = false; // solo per questa sessione, in memoria — niente cache/localStorage
+function isStandalone(){
+  return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+}
+function setupInstallBanner(){
+  const banner = document.getElementById('install-banner');
+  if(isStandalone()) return; // già installata come app
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredInstallPrompt = e;
+    if(currentTab === 'cliente' && !installBannerDismissed) banner.classList.remove('hidden');
+  });
+  window.addEventListener('appinstalled', () => {
+    banner.classList.add('hidden');
+    deferredInstallPrompt = null;
+  });
+}
+async function installApp(){
+  const banner = document.getElementById('install-banner');
+  if(!deferredInstallPrompt){ banner.classList.add('hidden'); return; }
+  deferredInstallPrompt.prompt();
+  await deferredInstallPrompt.userChoice;
+  deferredInstallPrompt = null;
+  banner.classList.add('hidden');
+}
+function dismissInstallBanner(){
+  installBannerDismissed = true;
+  document.getElementById('install-banner').classList.add('hidden');
+}
+
 function init(){
+  registerServiceWorker();
+  setupInstallBanner();
   renderCatTabs('cliente'); renderCatTabs('cassa');
   refreshAuthUI();
   positionIndicator();
@@ -730,7 +779,8 @@ Object.assign(window, {
   payAtCassa, openCardModal, closeCardModal, submitCardPayment, confirmCassaOrder,
   settlePending, showOrderStatus, closeOrderStatus, dismissChip, openTrackedOrder,
   ensureNotificationPermission, advanceTicket,
-  attemptLogin, logout, addMenuItem, removeMenuItem, setAdminPanel
+  attemptLogin, logout, addMenuItem, removeMenuItem, setAdminPanel,
+  installApp, dismissInstallBanner
 });
 
 init();
