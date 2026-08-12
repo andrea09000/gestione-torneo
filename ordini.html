@@ -6,17 +6,17 @@
 <title>OrderFlow</title>
 
 <!-- PWA: installabile su Android/desktop -->
-<link rel="manifest" href="manifest.json">
+<link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#141310">
 
 <!-- PWA: supporto "Aggiungi a Home" su iOS (Safari non legge il manifest) -->
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="OrderFlow">
-<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
 
-<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
-<link rel="icon" type="image/png" sizes="512x512" href="icons/icon-512.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="/icons/icon-512.png">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
 
@@ -111,7 +111,7 @@ button{font-family:inherit;}
 
 /* ---------- INSTALL BANNER (PWA) ---------- */
 .install-banner{display:flex;align-items:center;justify-content:space-between;gap:12px;background:linear-gradient(120deg,var(--cassa-dim),var(--rail-2));border:1px solid var(--cassa);border-radius:16px;padding:13px 16px;margin:0 0 16px;animation:fadeUp .3s ease both;}
-
+.install-banner.hidden{display:none;}
 .install-banner .ib-text{font-size:12.5px;color:var(--text-onrail);line-height:1.4;}
 .install-banner .ib-text b{color:var(--cassa);}
 .install-banner .ib-actions{display:flex;align-items:center;gap:8px;flex:0 0 auto;}
@@ -403,7 +403,7 @@ button{font-family:inherit;}
 
   <!-- CLIENTE -->
   <div class="view active" id="view-cliente">
-    <div class="install-banner " id="install-banner">
+    <div class="install-banner hidden" id="install-banner">
       <div class="ib-text">📲 <b>Installa OrderFlow</b> sulla schermata Home per ordinare più velocemente la prossima volta.</div>
       <div class="ib-actions">
         <button class="ib-btn" onclick="installApp()">Installa</button>

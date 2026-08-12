@@ -7,13 +7,15 @@
 // secondo momento, quando collegherai Cloud Functions + FCM.
 // =====================================================
 
-const CACHE_NAME = "orderflow-shell-v1";
+const CACHE_NAME = "orderflow-shell-v2";
 const APP_SHELL = [
-    "./ordini.html",
-    "./manifest.json",
-    "./js/ordini-app.js",
-    "./js/firebase-config.js",
-    "./icons/icon-512.png",
+    "/ordini",
+    "/manifest.json",
+    "/js/ordini-app.js",
+    "/js/firebase-config.js",
+    "/icons/icon-192.png",
+    "/icons/icon-512.png",
+    "/icons/icon-maskable-512.png"
 ];
 
 self.addEventListener("install", (event) => {
