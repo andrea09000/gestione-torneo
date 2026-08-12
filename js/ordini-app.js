@@ -633,9 +633,9 @@ function renderBadges(){
   document.getElementById('badge-cassa').textContent = pendingCount ? pendingCount+' da incassare' : '';
   document.getElementById('badge-cucina').textContent = cucinaCount ? cucinaCount+' attive' : '';
   document.getElementById('badge-bar').textContent = barCount ? barCount+' attive' : '';
-  if(pendingCount > lastPendingCount && currentTab !== 'cassa') toast('Nuovo ordine', 'Un cliente attende di pagare in cassa.', 'var(--cassa)');
-  if(cucinaCount > lastCucinaCount && currentTab !== 'cucina') toast('Cucina', 'Nuova comanda ricevuta.', 'var(--cucina)');
-  if(barCount > lastBarCount && currentTab !== 'bar') toast('Bar', 'Nuova comanda ricevuta.', 'var(--bar)');
+  if(pendingCount > lastPendingCount && isAuthorized('cassa') && currentTab !== 'cassa') toast('Nuovo ordine', 'Un cliente attende di pagare in cassa.', 'var(--cassa)');
+  if(cucinaCount > lastCucinaCount && isAuthorized('cucina') && currentTab !== 'cucina') toast('Cucina', 'Nuova comanda ricevuta.', 'var(--cucina)');
+  if(barCount > lastBarCount && isAuthorized('bar') && currentTab !== 'bar') toast('Bar', 'Nuova comanda ricevuta.', 'var(--bar)');
   lastPendingCount = pendingCount; lastCucinaCount = cucinaCount; lastBarCount = barCount;
 }
 function positionIndicator(){
