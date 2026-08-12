@@ -723,7 +723,7 @@ function initListeners(){
    in un secondo momento, quando collegherai Cloud Functions + FCM. */
 function registerServiceWorker(){
   if('serviceWorker' in navigator){
-    navigator.serviceWorker.register('./sw.js').catch(err => {
+    navigator.serviceWorker.register('/sw.js').catch(err => {
       console.error('Registrazione service worker fallita:', err);
     });
   }
@@ -735,64 +735,30 @@ let installBannerDismissed = false; // solo per questa sessione, in memoria — 
 function isStandalone(){
   return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
 }
-function setupInstallBanner() {
-
+function setupInstallBanner(){
   const banner = document.getElementById('install-banner');
-
-  console.log('setupInstallBanner()');
-
-  if (isStandalone()) {
-    console.log('PWA già installata');
-    return;
-  }
-
+  if(isStandalone()) return; // già installata come app
   window.addEventListener('beforeinstallprompt', (e) => {
-
-    console.log('🔥 beforeinstallprompt FIRED', e);
-
     e.preventDefault();
-
     deferredInstallPrompt = e;
-
-    console.log('deferredInstallPrompt =', deferredInstallPrompt);
-
-    if (currentTab === 'cliente' && !installBannerDismissed) {
-      banner.classList.remove('hidden');
-    }
+    if(currentTab === 'cliente' && !installBannerDismissed) banner.classList.remove('hidden');
   });
-
   window.addEventListener('appinstalled', () => {
-
-    console.log('✅ PWA INSTALLATA');
-
     banner.classList.add('hidden');
     deferredInstallPrompt = null;
   });
 }
-async function installApp() {
-
-  console.log('installApp() chiamata');
-  console.log('deferredInstallPrompt:', deferredInstallPrompt);
-
+async function installApp(){
   const banner = document.getElementById('install-banner');
-
-  if (!deferredInstallPrompt) {
-    console.warn('❌ Nessun beforeinstallprompt disponibile');
-    banner.classList.add('hidden');
-    return;
-  }
-
-  const promptEvent = deferredInstallPrompt;
-
+  if(!deferredInstallPrompt){ banner.classList.add('hidden'); return; }
+  deferredInstallPrompt.prompt();
+  await deferredInstallPrompt.userChoice;
   deferredInstallPrompt = null;
-
-  promptEvent.prompt();
-
-  const result = await promptEvent.userChoice;
-
-  console.log('Risultato installazione:', result);
-
   banner.classList.add('hidden');
+}
+function dismissInstallBanner(){
+  installBannerDismissed = true;
+  document.getElementById('install-banner').classList.add('hidden');
 }
 
 function init(){
