@@ -2,8 +2,21 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>OrderFlow</title>
+
+<!-- PWA: installabile su Android/desktop -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#141310">
+
+<!-- PWA: supporto "Aggiungi a Home" su iOS (Safari non legge il manifest) -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="OrderFlow">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="icons/icon-512.png">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
 
@@ -95,6 +108,15 @@ button{font-family:inherit;}
 .kiosk-hero{padding:6px 4px 18px;}
 .kiosk-hero .hi{font-family:'Oswald';font-size:26px;font-weight:700;letter-spacing:.01em;text-transform:none;}
 .kiosk-hero .lo{font-size:13px;color:var(--muted);margin-top:4px;}
+
+/* ---------- INSTALL BANNER (PWA) ---------- */
+.install-banner{display:flex;align-items:center;justify-content:space-between;gap:12px;background:linear-gradient(120deg,var(--cassa-dim),var(--rail-2));border:1px solid var(--cassa);border-radius:16px;padding:13px 16px;margin:0 0 16px;animation:fadeUp .3s ease both;}
+.install-banner.hidden{display:none;}
+.install-banner .ib-text{font-size:12.5px;color:var(--text-onrail);line-height:1.4;}
+.install-banner .ib-text b{color:var(--cassa);}
+.install-banner .ib-actions{display:flex;align-items:center;gap:8px;flex:0 0 auto;}
+.install-banner .ib-btn{font-family:'Oswald';text-transform:uppercase;font-size:11.5px;font-weight:700;letter-spacing:.04em;background:var(--cassa);color:var(--rail);border:none;padding:9px 14px;border-radius:10px;cursor:pointer;white-space:nowrap;}
+.install-banner .ib-x{background:transparent;border:none;color:var(--muted-2);font-size:16px;cursor:pointer;padding:2px 4px;}
 
 /* ---------- ORDER CHIP (promemoria ultimo ordine) ---------- */
 .order-chip{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--rail-2);border:1px solid var(--line);border-radius:16px;padding:13px 16px;margin:14px 0 4px;cursor:pointer;transition:border-color .2s ease;animation:fadeUp .3s ease both;}
@@ -381,6 +403,13 @@ button{font-family:inherit;}
 
   <!-- CLIENTE -->
   <div class="view active" id="view-cliente">
+    <div class="install-banner hidden" id="install-banner">
+      <div class="ib-text">📲 <b>Installa OrderFlow</b> sulla schermata Home per ordinare più velocemente la prossima volta.</div>
+      <div class="ib-actions">
+        <button class="ib-btn" onclick="installApp()">Installa</button>
+        <button class="ib-x" onclick="dismissInstallBanner()">×</button>
+      </div>
+    </div>
     <div class="kiosk-hero">
       <div class="hi">Cosa ti va di ordinare oggi?</div>
       <div class="lo">Scegli una categoria e tocca un piatto per aggiungerlo.</div>
