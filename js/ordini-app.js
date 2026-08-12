@@ -735,30 +735,64 @@ let installBannerDismissed = false; // solo per questa sessione, in memoria — 
 function isStandalone(){
   return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
 }
-function setupInstallBanner(){
+function setupInstallBanner() {
+
   const banner = document.getElementById('install-banner');
-  if(isStandalone()) return; // già installata come app
+
+  console.log('setupInstallBanner()');
+
+  if (isStandalone()) {
+    console.log('PWA già installata');
+    return;
+  }
+
   window.addEventListener('beforeinstallprompt', (e) => {
+
+    console.log('🔥 beforeinstallprompt FIRED', e);
+
     e.preventDefault();
+
     deferredInstallPrompt = e;
-    if(currentTab === 'cliente' && !installBannerDismissed) banner.classList.remove('hidden');
+
+    console.log('deferredInstallPrompt =', deferredInstallPrompt);
+
+    if (currentTab === 'cliente' && !installBannerDismissed) {
+      banner.classList.remove('hidden');
+    }
   });
+
   window.addEventListener('appinstalled', () => {
+
+    console.log('✅ PWA INSTALLATA');
+
     banner.classList.add('hidden');
     deferredInstallPrompt = null;
   });
 }
-async function installApp(){
+async function installApp() {
+
+  console.log('installApp() chiamata');
+  console.log('deferredInstallPrompt:', deferredInstallPrompt);
+
   const banner = document.getElementById('install-banner');
-  if(!deferredInstallPrompt){ banner.classList.add('hidden'); return; }
-  deferredInstallPrompt.prompt();
-  await deferredInstallPrompt.userChoice;
+
+  if (!deferredInstallPrompt) {
+    console.warn('❌ Nessun beforeinstallprompt disponibile');
+    banner.classList.add('hidden');
+    return;
+  }
+
+  const promptEvent = deferredInstallPrompt;
+
   deferredInstallPrompt = null;
+
+  promptEvent.prompt();
+
+  const result = await promptEvent.userChoice;
+
+  console.log('Risultato installazione:', result);
+
   banner.classList.add('hidden');
-}
-function dismissInstallBanner(){
-  installBannerDismissed = true;
-  document.getElementById('install-banner').classList.add('hidden');
 }
 
 function init(){
