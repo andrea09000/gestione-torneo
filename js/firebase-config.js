@@ -3,7 +3,6 @@
 // Sostituisci con i dati del TUO progetto Firebase.
 // Console: https://console.firebase.google.com/
 // =====================================================
-
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {
     getFirestore,
@@ -22,9 +21,9 @@ import {
     onSnapshot,
     serverTimestamp,
     Timestamp,
-    increment
+    increment,
+    runTransaction
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
 const firebaseConfig = {
     apiKey: "AIzaSyCtNYAa7WlQjWCn-1Mr73w82H_PUhSbnXY",
     authDomain: "gestionetorneo-f0984.firebaseapp.com",
@@ -34,10 +33,8 @@ const firebaseConfig = {
     appId: "1:654451650463:web:37ad22bb60704ef60397aa",
     measurementId: "G-M4ZHTS6WQE"
 };
-
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-
 export {
     db,
     collection,
@@ -55,5 +52,6 @@ export {
     onSnapshot,
     serverTimestamp,
     Timestamp,
-    increment
+    increment,
+    runTransaction
 };
