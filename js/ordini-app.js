@@ -64,7 +64,8 @@ let carts = { cliente: {}, cassa: {} };
 let filters = { cliente: 'tutto', cassa: 'tutto' };
 let currentTab = 'cliente';
 let cardModalContext = null;
-let trackedOrderId = null;
+let trackedOrderIds = [];   // tutti gli ordini attivi di questo cliente (può ordinare più volte)
+let activeStatusOrderId = null; // quale ordine sta mostrando la schermata a tutto schermo in questo momento
 let notifiedOrders = new Set();
 let lastCucinaCount = 0, lastBarCount = 0, lastPendingCount = 0;
 let lastMenuSig = null;
@@ -353,15 +354,20 @@ async function settlePending(orderId, method){
 
 /* ============ ORDER STATUS SCREEN ============ */
 function showOrderStatus(orderId){
-  trackedOrderId = orderId;
+  if(!trackedOrderIds.includes(orderId)) trackedOrderIds.push(orderId);
+  activeStatusOrderId = orderId;
   renderOrderStatus();
   renderNotifRow();
   ensureNotificationPermission();
   document.getElementById('status-screen').classList.add('open');
 }
-function closeOrderStatus(){ document.getElementById('status-screen').classList.remove('open'); updateOrderChip(); }
-function dismissChip(evt){ evt.stopPropagation(); trackedOrderId = null; updateOrderChip(); }
-function openTrackedOrder(){ if(trackedOrderId) showOrderStatus(trackedOrderId); }
+function closeOrderStatus(){ document.getElementById('status-screen').classList.remove('open'); renderOrderChips(); }
+function dismissChip(evt, orderId){
+  evt.stopPropagation();
+  trackedOrderIds = trackedOrderIds.filter(id => id !== orderId);
+  renderOrderChips();
+}
+function openTrackedOrder(orderId){ showOrderStatus(orderId); }
 
 function stationProgress(orderId, cat){
   const t = tickets.find(tk=>tk.orderId===orderId && tk.cat===cat);
@@ -384,7 +390,7 @@ function stepTrackHtml(cat, status){
   return `<div class="track-station"><div class="track-label">${ico} ${label}</div><div class="track-steps">${stepsHtml}</div></div>`;
 }
 function renderOrderStatus(){
-  const order = orders.find(o=>o.id===trackedOrderId);
+  const order = orders.find(o=>o.id===activeStatusOrderId);
   const body = document.getElementById('status-body');
   if(!order){ body.innerHTML = ''; return; }
   document.getElementById('status-number').textContent = '#' + String(order.number).padStart(3,'0');
@@ -415,19 +421,34 @@ function orderShortStatus(order){
   if(statuses.some(s=>s==='prep')) return {text:'in preparazione', ready:false, done:false};
   return {text:'ricevuto', ready:false, done:false};
 }
-function updateOrderChip(){
-  const chip = document.getElementById('order-chip');
-  if(!trackedOrderId){ chip.classList.add('hidden'); return; }
-  const order = orders.find(o=>o.id===trackedOrderId);
-  if(!order){ chip.classList.add('hidden'); return; }
-  const s = orderShortStatus(order);
-  maybeNotifyReady(order, s);
-  if(s.done){ chip.classList.add('hidden'); return; }
-  chip.classList.remove('hidden');
-  document.getElementById('oc-num').textContent = '#' + String(order.number).padStart(3,'0');
-  const statusEl = document.getElementById('oc-status');
-  statusEl.textContent = s.text;
-  statusEl.classList.toggle('ready', s.ready);
+function renderOrderChips(){
+  const container = document.getElementById('order-chips');
+  if(!container) return;
+
+  // controlla ogni ordine tracciato: notifica se pronto, scarta quelli già ritirati
+  const stillActive = [];
+  trackedOrderIds.forEach(id=>{
+    const order = orders.find(o=>o.id===id);
+    if(!order) return; // non ancora arrivato dal listener, o rimosso
+    const s = orderShortStatus(order);
+    maybeNotifyReady(order, s);
+    if(!s.done) stillActive.push({order, status:s});
+  });
+  trackedOrderIds = stillActive.map(x=>x.order.id);
+
+  if(stillActive.length === 0){ container.innerHTML = ''; return; }
+  container.innerHTML = stillActive.map(({order, status})=>`
+    <div class="order-chip" onclick="openTrackedOrder('${order.id}')">
+      <div class="oc-left">
+        <div class="oc-num">#${String(order.number).padStart(3,'0')}</div>
+        <div class="oc-status ${status.ready?'ready':''}">${status.text}</div>
+      </div>
+      <div class="oc-right">
+        <span class="oc-go">Vedi ▸</span>
+        <button class="oc-x" onclick="dismissChip(event,'${order.id}')">×</button>
+      </div>
+    </div>
+  `).join('');
 }
 
 /* ============ NOTIFICHE ORDINE PRONTO ============ */
@@ -736,7 +757,7 @@ function renderAll(){
   const barSig = barBoardSig();
   if(barSig !== lastBarTicketSig){ lastBarTicketSig = barSig; renderKanban('kanban-bar','bevande','bar'); }
   renderBadges();
-  updateOrderChip();
+  renderOrderChips();
   if(document.getElementById('status-screen').classList.contains('open')) renderOrderStatus();
   const sig = menu().map(m=>m.id).join(',');
   if(sig !== lastMenuSig){
