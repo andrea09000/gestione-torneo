@@ -356,14 +356,17 @@ async function settlePending(orderId, method){
 }
 
 /* ============ ORDER STATUS SCREEN ============ */
+let summaryExpanded = false;
 function showOrderStatus(orderId){
   if(!trackedOrderIds.includes(orderId)) trackedOrderIds.push(orderId);
+  if(activeStatusOrderId !== orderId) summaryExpanded = false; // riparte chiuso se cambi ordine
   activeStatusOrderId = orderId;
   renderOrderStatus();
   renderNotifRow();
   ensureNotificationPermission();
   document.getElementById('status-screen').classList.add('open');
 }
+function toggleOrderSummary(){ summaryExpanded = !summaryExpanded; renderOrderStatus(); }
 function closeOrderStatus(){ document.getElementById('status-screen').classList.remove('open'); renderOrderChips(); }
 function dismissChip(evt, orderId){
   evt.stopPropagation();
@@ -393,6 +396,7 @@ function stepTrackHtml(cat, status){
   return `<div class="track-station"><div class="track-label">${ico} ${label}</div><div class="track-steps">${stepsHtml}</div></div>`;
 }
 function orderSummaryHtml(order){
+  const totalQty = order.items.reduce((s,i)=>s+i.qty,0);
   const lines = order.items.map(i => `
     <div class="summary-line">
       <span>${i.qty}× ${i.name}</span>
@@ -400,9 +404,15 @@ function orderSummaryHtml(order){
     </div>
   `).join('');
   return `
-    <div class="order-summary">
-      ${lines}
-      <div class="summary-total"><span>Totale</span><span class="mono">€${order.total.toFixed(2)}</span></div>
+    <div class="order-summary ${summaryExpanded ? 'expanded' : ''}">
+      <button class="summary-toggle" onclick="toggleOrderSummary()">
+        <span>Riepilogo ordine (${totalQty} articoli)</span>
+        <span class="summary-caret">▾</span>
+      </button>
+      <div class="summary-content">
+        ${lines}
+        <div class="summary-total"><span>Totale</span><span class="mono">€${order.total.toFixed(2)}</span></div>
+      </div>
     </div>
   `;
 }
@@ -871,7 +881,7 @@ function init(){
 Object.assign(window, {
   switchTab, setFilter, addToCart, decFromCart, openSheet, closeSheet,
   payAtCassa, openCardModal, closeCardModal, submitCardPayment, confirmCassaOrder,
-  settlePending, showOrderStatus, closeOrderStatus, dismissChip, openTrackedOrder,
+  settlePending, showOrderStatus, closeOrderStatus, dismissChip, openTrackedOrder, toggleOrderSummary,
   ensureNotificationPermission, advanceTicket,
   attemptLogin, logout, addMenuItem, removeMenuItem, setAdminPanel,
   installApp, dismissInstallBanner,
