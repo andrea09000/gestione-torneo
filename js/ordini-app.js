@@ -171,6 +171,7 @@ function refreshAuthUI(){
     }
   });
   if(currentTab === 'admin' && session.admin) renderAdminAll();
+  renderTabsBar();
   renderAll();
 }
 
@@ -486,6 +487,58 @@ function maybeNotifyReady(order, status){
   }
 }
 
+/* ============ BARRA TAB DINAMICA per ruolo ============
+   Cliente: nessuna barra, mai. Cucina/Bar: solo la propria
+   sezione, nessuna barra. Cassa: Cliente + Cassa. Admin:
+   tutte e 5 le sezioni, come oggi. */
+const ALL_TABS = [
+  {key:'cliente', label:'Cliente', sub:'ordina & paga'},
+  {key:'cassa',   label:'Cassa',   badgeId:'badge-cassa'},
+  {key:'cucina',  label:'Cucina',  badgeId:'badge-cucina'},
+  {key:'bar',     label:'Bar',     badgeId:'badge-bar'},
+  {key:'admin',   label:'Admin',   sub:'gestione'}
+];
+function visibleTabKeys(){
+  if(session.admin) return ['cliente','cassa','cucina','bar','admin'];
+  const tabs = [];
+  if(session.cassa) tabs.push('cliente','cassa');
+  if(session.cucina) tabs.push('cucina');
+  if(session.bar) tabs.push('bar');
+  if(tabs.length === 0) tabs.push('cliente');
+  return tabs;
+}
+function renderTabsBar(){
+  const keys = visibleTabKeys();
+  const tabsEl = document.getElementById('tabs');
+  const staffEntry = document.getElementById('staff-entry');
+  const noStaffLoggedIn = !session.cassa && !session.cucina && !session.bar && !session.admin;
+  staffEntry.classList.toggle('hidden', !noStaffLoggedIn);
+  if(!noStaffLoggedIn) closeStaffMenu();
+
+  const showBar = keys.length > 1;
+  tabsEl.classList.toggle('hidden', !showBar);
+  if(showBar){
+    tabsEl.innerHTML = '<div class="tab-indicator" id="tab-indicator"></div>' + keys.map(k=>{
+      const t = ALL_TABS.find(x=>x.key===k);
+      const badgeSpan = t.badgeId ? `<span class="n" id="${t.badgeId}"></span>` : `<span class="n">${t.sub||''}</span>`;
+      return `<button class="tab ${currentTab===k?'active':''}" data-tab="${k}" onclick="switchTab('${k}')">${t.label}${badgeSpan}</button>`;
+    }).join('');
+  }
+  if(!keys.includes(currentTab)){
+    currentTab = keys[0];
+    document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+    document.getElementById('view-'+currentTab).classList.add('active');
+  }
+  positionIndicator();
+}
+function toggleStaffMenu(){ document.getElementById('staff-menu').classList.toggle('hidden'); }
+function closeStaffMenu(){ document.getElementById('staff-menu').classList.add('hidden'); }
+function goToRole(role){ closeStaffMenu(); switchTab(role); }
+document.addEventListener('click', (e) => {
+  const entry = document.getElementById('staff-entry');
+  if(entry && !entry.contains(e.target)) closeStaffMenu();
+});
+
 /* ============ CASSA PENDING ============ */
 function renderCassaPending(){
   const el = document.getElementById('cassa-pending');
@@ -630,9 +683,12 @@ function renderBadges(){
   const pendingCount = orders.filter(o=>o.source==='app' && o.paymentStatus==='in_attesa').length;
   const cucinaCount = tickets.filter(t=>t.cat==='cibo' && (t.status==='coda'||t.status==='prep')).length;
   const barCount = tickets.filter(t=>(t.cat==='bevande' && t.status!=='consegnato') || (t.cat==='cibo' && t.status==='pronto')).length;
-  document.getElementById('badge-cassa').textContent = pendingCount ? pendingCount+' da incassare' : '';
-  document.getElementById('badge-cucina').textContent = cucinaCount ? cucinaCount+' attive' : '';
-  document.getElementById('badge-bar').textContent = barCount ? barCount+' attive' : '';
+  const badgeCassa = document.getElementById('badge-cassa');
+  const badgeCucina = document.getElementById('badge-cucina');
+  const badgeBar = document.getElementById('badge-bar');
+  if(badgeCassa) badgeCassa.textContent = pendingCount ? pendingCount+' da incassare' : '';
+  if(badgeCucina) badgeCucina.textContent = cucinaCount ? cucinaCount+' attive' : '';
+  if(badgeBar) badgeBar.textContent = barCount ? barCount+' attive' : '';
   if(pendingCount > lastPendingCount && isAuthorized('cassa') && currentTab !== 'cassa') toast('Nuovo ordine', 'Un cliente attende di pagare in cassa.', 'var(--cassa)');
   if(cucinaCount > lastCucinaCount && isAuthorized('cucina') && currentTab !== 'cucina') toast('Cucina', 'Nuova comanda ricevuta.', 'var(--cucina)');
   if(barCount > lastBarCount && isAuthorized('bar') && currentTab !== 'bar') toast('Bar', 'Nuova comanda ricevuta.', 'var(--bar)');
@@ -660,7 +716,6 @@ function switchTab(tab){
   if(tab==='admin' && session.admin) renderAdminAll();
   renderAll();
 }
-
 /* ============ MASTER RENDER (chiamato dai listener Firestore) ============ */
 function ticketsSig(cat){
   return tickets.filter(t=>t.cat===cat && t.status!=='consegnato').map(t=>t.id+':'+t.status).sort().join('|');
@@ -765,8 +820,8 @@ function init(){
   registerServiceWorker();
   setupInstallBanner();
   renderCatTabs('cliente'); renderCatTabs('cassa');
+  renderTabsBar();
   refreshAuthUI();
-  positionIndicator();
   window.addEventListener('resize', positionIndicator);
   initListeners();
 }
@@ -780,7 +835,8 @@ Object.assign(window, {
   settlePending, showOrderStatus, closeOrderStatus, dismissChip, openTrackedOrder,
   ensureNotificationPermission, advanceTicket,
   attemptLogin, logout, addMenuItem, removeMenuItem, setAdminPanel,
-  installApp, dismissInstallBanner
+  installApp, dismissInstallBanner,
+  toggleStaffMenu, goToRole
 });
 
 init();
