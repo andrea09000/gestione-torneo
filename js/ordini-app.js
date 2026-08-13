@@ -389,6 +389,20 @@ function stepTrackHtml(cat, status){
   });
   return `<div class="track-station"><div class="track-label">${ico} ${label}</div><div class="track-steps">${stepsHtml}</div></div>`;
 }
+function orderSummaryHtml(order){
+  const lines = order.items.map(i => `
+    <div class="summary-line">
+      <span>${i.qty}× ${i.name}</span>
+      <span class="mono">€${(i.price*i.qty).toFixed(2)}</span>
+    </div>
+  `).join('');
+  return `
+    <div class="order-summary">
+      ${lines}
+      <div class="summary-total"><span>Totale</span><span class="mono">€${order.total.toFixed(2)}</span></div>
+    </div>
+  `;
+}
 function renderOrderStatus(){
   const order = orders.find(o=>o.id===activeStatusOrderId);
   const body = document.getElementById('status-body');
@@ -397,7 +411,7 @@ function renderOrderStatus(){
 
   if(order.paymentStatus === 'in_attesa'){
     document.getElementById('status-eyebrow').textContent = 'Ordine registrato';
-    body.innerHTML = `<div class="pending-banner"><span class="pb-dot"></span>In attesa di pagamento in cassa — mostra questo numero allo sportello.</div>`;
+    body.innerHTML = `<div class="pending-banner"><span class="pb-dot"></span>In attesa di pagamento in cassa — mostra questo numero allo sportello.</div>${orderSummaryHtml(order)}`;
     return;
   }
   const cats = [...new Set(order.items.map(i=>i.cat))];
@@ -409,6 +423,7 @@ function renderOrderStatus(){
   if(allPicked){ html += `<div class="ready-banner">✓ Ordine ritirato</div>`; }
   else if(allReady){ html += `<div class="ready-banner">✓ Pronto per il ritiro!</div>`; }
   html += cats.map(cat=>stepTrackHtml(cat, stationProgress(order.id, cat) || 'coda')).join('');
+  html += orderSummaryHtml(order);
   body.innerHTML = html;
   renderNotifRow();
 }
