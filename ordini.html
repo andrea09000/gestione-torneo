@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>OrderFlow - Agnosine</title>
+<title>OrderFlow</title>
 
 <!-- PWA: installabile su Android/desktop -->
 <link rel="manifest" href="/manifest.json">
@@ -15,6 +15,7 @@
 <meta name="apple-mobile-web-app-title" content="OrderFlow">
 <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
 
+<link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png">
 <link rel="icon" type="image/png" sizes="512x512" href="/icons/icon-512.png">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
@@ -88,6 +89,16 @@ button{font-family:inherit;}
 /* ---------- TABS ---------- */
 .tabs{position:relative;display:grid;grid-template-columns:repeat(5,1fr);gap:0;background:var(--rail-2);border:1px solid var(--line);border-radius:16px;padding:5px;margin-bottom:30px;}
 .tab-indicator{position:absolute;top:5px;left:5px;height:calc(100% - 10px);width:0;background:var(--rail-3);border-radius:12px;transition:left .35s cubic-bezier(.65,0,.35,1), width .35s cubic-bezier(.65,0,.35,1), box-shadow .3s ease;z-index:0;}
+.tabs.hidden{display:none;}
+
+.staff-entry{position:relative;}
+.staff-entry.hidden{display:none;}
+.staff-entry-btn{background:transparent;border:1px solid var(--line);color:var(--muted);width:30px;height:30px;border-radius:8px;cursor:pointer;font-size:14px;transition:all .15s ease;}
+.staff-entry-btn:hover{color:var(--text-onrail);border-color:#4a453d;}
+.staff-menu{position:absolute;top:38px;right:0;background:var(--rail-2);border:1px solid var(--line);border-radius:12px;padding:6px;display:flex;flex-direction:column;gap:3px;min-width:130px;box-shadow:var(--shadow);z-index:30;}
+.staff-menu.hidden{display:none;}
+.staff-menu button{background:transparent;border:none;color:var(--text-onrail);text-align:left;padding:10px 11px;border-radius:8px;cursor:pointer;font-family:'Oswald';text-transform:uppercase;font-size:12px;letter-spacing:.03em;font-weight:600;}
+.staff-menu button:hover{background:var(--rail-3);}
 .tab{position:relative;z-index:1;background:transparent;border:none;color:var(--muted);font-family:'Oswald',sans-serif;text-transform:uppercase;letter-spacing:0.05em;font-size:13px;font-weight:600;padding:13px 8px;cursor:pointer;text-align:center;transition:color .25s ease;border-radius:12px;display:flex;flex-direction:column;align-items:center;gap:3px;}
 .tab .n{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted-2);letter-spacing:0;text-transform:none;min-height:13px;transition:color .25s ease;}
 .tab.active{color:var(--text-onrail);}
@@ -386,18 +397,22 @@ button{font-family:inherit;}
   <div class="topbar">
     <div class="brand">
       <div class="mark">OF</div>
-      <div>ORDERFLOW<div class="sub">Agnosine</div></div>
+      <div>ORDERFLOW<div class="sub">sala · cassa · cucina · bar · admin</div></div>
     </div>
     <div class="live"><span class="dot"></span>sincronizzato</div>
+    <div class="staff-entry hidden" id="staff-entry">
+      <button class="staff-entry-btn" onclick="toggleStaffMenu()" title="Accesso staff">⚙</button>
+      <div class="staff-menu hidden" id="staff-menu">
+        <button onclick="goToRole('cassa')">Cassa</button>
+        <button onclick="goToRole('cucina')">Cucina</button>
+        <button onclick="goToRole('bar')">Bar</button>
+        <button onclick="goToRole('admin')">Admin</button>
+      </div>
+    </div>
   </div>
 
-  <div class="tabs" id="tabs">
+  <div class="tabs hidden" id="tabs">
     <div class="tab-indicator" id="tab-indicator"></div>
-    <button class="tab active" data-tab="cliente" onclick="switchTab('cliente')">Cliente<span class="n">ordina & paga</span></button>
-    <button class="tab" data-tab="cassa" onclick="switchTab('cassa')">Cassa<span class="n" id="badge-cassa"></span></button>
-    <button class="tab" data-tab="cucina" onclick="switchTab('cucina')">Cucina<span class="n" id="badge-cucina"></span></button>
-    <button class="tab" data-tab="bar" onclick="switchTab('bar')">Bar<span class="n" id="badge-bar"></span></button>
-    <button class="tab" data-tab="admin" onclick="switchTab('admin')">Admin<span class="n">gestione</span></button>
   </div>
 
   <!-- CLIENTE -->
