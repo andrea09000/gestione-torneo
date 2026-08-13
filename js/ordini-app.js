@@ -78,14 +78,17 @@ function tsToMillis(ts){ return (ts && typeof ts.toMillis === 'function') ? ts.t
 /* ============ FIRESTORE: numero ordine progressivo ============
    Un contatore condiviso (counters/orders) incrementato dentro una
    transazione, così due ordini creati nello stesso istante da
-   dispositivi diversi non ricevono mai lo stesso numero. */
+   dispositivi diversi non ricevono mai lo stesso numero.
+   Si resetta da solo a #1 al primo ordine di ogni nuovo giorno. */
 async function getNextOrderNumber(){
   const counterRef = doc(db, 'counters', 'orders');
+  const todayKey = new Date().toDateString(); // stessa convenzione usata per "oggi" nelle statistiche admin
   return await runTransaction(db, async (tx) => {
     const snap = await tx.get(counterRef);
-    const current = snap.exists() ? (snap.data().value || 0) : 0;
+    const data = snap.exists() ? snap.data() : null;
+    const current = (data && data.date === todayKey) ? (data.value || 0) : 0;
     const next = current + 1;
-    tx.set(counterRef, { value: next }, { merge: true });
+    tx.set(counterRef, { value: next, date: todayKey }, { merge: true });
     return next;
   });
 }
