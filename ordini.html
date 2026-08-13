@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>OrderFlow</title>
+<title>OrderFlow - Agnosine</title>
 
 <!-- PWA: installabile su Android/desktop -->
 <link rel="manifest" href="/manifest.json">
@@ -15,7 +15,6 @@
 <meta name="apple-mobile-web-app-title" content="OrderFlow">
 <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
 
-<link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png">
 <link rel="icon" type="image/png" sizes="512x512" href="/icons/icon-512.png">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
@@ -387,6 +386,35 @@ button{font-family:inherit;}
   .add-item-grid{grid-template-columns:1fr 1fr;}
   .status-number{font-size:60px;}
 }
+/* ---------- FOOTER ---------- */
+.site-footer{
+  margin-top:40px;
+  padding:22px 4px 10px;
+  border-top:1px solid var(--line);
+  text-align:center;
+  color:var(--muted);
+  font-family:'IBM Plex Mono',monospace;
+  font-size:10px;
+  letter-spacing:.02em;
+}
+
+.site-footer a{
+  color:var(--text-onrail);
+  text-decoration:none;
+  transition:color .2s ease;
+}
+
+.site-footer a:hover{
+  color:var(--cassa);
+}
+
+@media (max-width:640px){
+  .site-footer{
+    margin-top:30px;
+    padding-top:18px;
+    font-size:9.5px;
+  }
+}
 </style>
 </head>
 <body>
@@ -397,7 +425,7 @@ button{font-family:inherit;}
   <div class="topbar">
     <div class="brand">
       <div class="mark">OF</div>
-      <div>ORDERFLOW<div class="sub">sala · cassa · cucina · bar · admin</div></div>
+      <div>ORDERFLOW<div class="sub">Agnosine</div></div>
     </div>
     <div class="live"><span class="dot"></span>sincronizzato</div>
     <div class="staff-entry hidden" id="staff-entry">
@@ -590,5 +618,16 @@ button{font-family:inherit;}
 </div>
 
 <script type="module" src="js/ordini-app.js"></script>
+
+<footer class="site-footer">
+  <p>
+    © 2026 · Designed &amp; developed by
+    <a href="https://instagram.com/d_cirelli07" target="_blank" rel="noopener noreferrer">
+      Davide Cirelli
+    </a>
+  </p>
+</footer>
+
+  
 </body>
 </html>
