@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>OrderFlow - Agnosine</title>
+<title>OrderFlow</title>
 
 <!-- PWA: installabile su Android/desktop -->
 <link rel="manifest" href="/manifest.json">
@@ -234,6 +234,11 @@ button{font-family:inherit;}
 
 .status-actions{margin-top:8px;display:flex;gap:10px;}
 
+.order-summary{background:#f0ead9;border-radius:14px;padding:12px 14px;margin:4px 0 18px;text-align:left;}
+.summary-line{display:flex;justify-content:space-between;font-size:12.5px;padding:5px 0;border-bottom:1px dashed #ddd3bc;color:#4a4436;}
+.summary-line:last-of-type{border-bottom:none;}
+.summary-total{display:flex;justify-content:space-between;font-family:'Oswald';text-transform:uppercase;letter-spacing:.03em;font-weight:700;font-size:12.5px;padding-top:9px;margin-top:4px;border-top:1px solid #ddd3bc;color:var(--ink);}
+
 .notif-row{display:flex;align-items:center;justify-content:center;gap:8px;font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:#8a8065;margin:2px 0 18px;padding:9px 12px;background:#f0ead9;border-radius:12px;}
 .notif-row.granted{color:#1f7a5c;background:#e2f5ec;}
 .notif-row.denied{color:#a23c30;background:#fbe2df;}
@@ -425,7 +430,7 @@ button{font-family:inherit;}
   <div class="topbar">
     <div class="brand">
       <div class="mark">OF</div>
-      <div>ORDERFLOW<div class="sub">Agnosine</div></div>
+      <div>ORDERFLOW<div class="sub">sala · cassa · cucina · bar · admin</div></div>
     </div>
     <div class="live"><span class="dot"></span>sincronizzato</div>
     <div class="staff-entry hidden" id="staff-entry">
